@@ -1,12 +1,13 @@
 # Witty Chrome Extension
 
 ## Overview
-Witty Chrome Extension is a two-part open-source project designed to enhance browser interactions with an intelligent Chrome extension frontend and a Flask-based Python backend API. This repository consists of:
+Witty Chrome Extension is a two-part open-source project designed to enhance browser interactions with a Chrome extension frontend and a Python backend run locally. This repository consists of:
 
 - **witty_gerbil_frontend**: A Chrome extension built with JavaScript, HTML, and CSS for automating tasks and enhancing user interaction in the browser.
 - **witty_gerbil_backend_api**: A Flask-based backend API that powers the extension's functionality.
 
 ## Repository Structure
+*Note: Some of the directories/files are empty, leaving room for future iterations and features.*
 
 ```
 witty_chrome_extension/
@@ -23,10 +24,8 @@ witty_chrome_extension/
 │   │   └── services/
 │   │       └── __init__.py
 │   ├── results/
-│   │   └── dataset_results.csv
 │   ├── .env.example
 │   ├── README.md
-│   ├── prompt_dataset.csv
 │   ├── requirements.txt
 │   ├── run.sh
 │   └── start_server.py
@@ -51,17 +50,16 @@ witty_chrome_extension/
 
 ### Frontend (Chrome Extension)
 - Automates webpage interactions (sending inputs, extracting responses)
-- Configurable selectors for identifying user, assistant, and input fields
+- Configurable selectors for identifying user, assistant, and input fields (defaults to auto-detect)
 - Supports manual and automated message sending workflows
 - Benchmarking functionality for running datasets and analyzing results
 - Resizable and draggable UI
 
 ### Backend (Flask API)
-- Generates prompts using OpenAI models with chat history context, user objectives, and special notes
+- Generates prompts using OpenAI gpt-4o model using chat history context, user objectives, and special notes as context
 - Handles chat history compression for large conversations
 - Processes datasets (CSV/Excel) for benchmarking tasks
 - Saves results to files with download endpoints
-- Simple, extensible Python implementation
 
 ## Citation
 
@@ -136,7 +134,7 @@ cd ../witty_gerbil_frontend
 - Select the `witty_gerbil_frontend` folder
 - The extension icon will appear in your browser
 
-3. Configure Backend URL (if needed):
+3. Configure Backend URL (if needed / if you chose to run your backend on a different port, etc.):
 - Open `content.js`
 - Update `BACKEND_API_BASE_URL` if your backend runs elsewhere:
 ```javascript
@@ -147,19 +145,20 @@ const BACKEND_API_BASE_URL = "http://your-backend-url-here";
 
 ### General Workflow
 
-1. Start the backend server with valid configurations
+1. Start the backend server with valid configurations (api_keys, etc.)
 
 2. Use the Chrome extension:
 - Configure webpage selectors (or use auto-detect)
 - Set your objective and optional notes
 - Choose an interaction mode:
-  - Manual prompt generation
-  - Automated conversation
-  - Dataset benchmarking
+  - Generate Next Prompt
+  - Automate Conversation
+  - Benchmark using your own .csv/excel file
+  - Save resutls locally
 
 3. Features:
 - **Red Team With Me**: Define objective and notes, generate prompts
-- **Automate Conversation**: Set parameters for automated interactions
+- **Automate Conversation**: Given x number of max turns, generate the next likely prompt to meet the objective given the chat history and special notes, paste that prompt into the text input box, press [Enter] or the submit button on the page, wait for the response to be finished streaming, do that all over again for x number of turns.
 - **Dataset Benchmarking**: Upload and process CSV/Excel datasets
 - **Selector Configuration**: Manual or auto-detect DOM elements
 
