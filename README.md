@@ -184,7 +184,8 @@ git push origin feature-name
 4. Open a pull request with details
 
 ## License
-MIT License (See LICENSE file)
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Support
 Open issues on our [GitHub repository](https://github.com/Witty-Gerbil/witty_chrome_extension/issues)
