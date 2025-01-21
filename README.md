@@ -1,10 +1,11 @@
-# Witty Chrome Extension
+# Witty Gerbil Chrome Extension
 
 ## Overview
-Witty Chrome Extension is a two-part open-source project designed to enhance browser interactions with a Chrome extension frontend and a Python backend run locally. This repository consists of:
+Witty Gerbil Chrome Extension (WGCE) is a two-part open-source project designed to enhance AI Red Teaming efforts with a Chrome extension frontend and a Python backend run locally. This repository consists of:
 
 - **witty_gerbil_frontend**: A Chrome extension built with JavaScript, HTML, and CSS for automating tasks and enhancing user interaction in the browser.
 - **witty_gerbil_backend_api**: A Flask-based backend API that powers the extension's functionality.
+- - **.env.examlpe**: A file for secrets where you need to plugin your key values to get started.
 
 ## Repository Structure
 *Note: Some of the directories/files are empty, leaving room for future iterations and features.*
@@ -78,6 +79,13 @@ If you benefit from this code or research, please cite our papers:
 }
 
 ```
+
+## Video Demo Coming Soon
+```
+
+
+```
+
 
 ## Setup Instructions
 
