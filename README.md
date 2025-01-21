@@ -66,7 +66,17 @@ witty_chrome_extension/
 If you benefit from this code or research, please cite our papers:
 
 ```
-[Citation placeholder - Add your paper details here]
+@misc{cameron2025wittygerbil,
+  title        = {Witty Gerbil Chrome Extension: A Browser-Based Framework for Comprehensive AI System Evaluation},
+  author       = {Cameron, Samuel},
+  year         = {2025},
+  eprint       = {submit/6144732},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.AI},
+  note         = {Submission in progress},
+  url          = {http://creativecommons.org/licenses/by/4.0/}
+}
+
 ```
 
 ## Setup Instructions
