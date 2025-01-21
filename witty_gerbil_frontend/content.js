@@ -1,6 +1,5 @@
 /***************************************************
- * content.js - FINAL VERSION with enhanced sendMessage &
- *              validation and automated retry logic
+ * content.js - FINAL VERSION
  ***************************************************/
 (function() {
     "use strict";
@@ -18,7 +17,7 @@
     const LS_USER_SELECTOR_KEY = "llm_user_selector";
     const LS_ASSISTANT_SELECTOR_KEY = "llm_assistant_selector";
     const LS_INPUT_SELECTOR_KEY = "llm_input_selector";
-    const LS_WAIT_MODE_KEY = "llm_wait_mode"; // new: for time-based vs auto-detect
+    const LS_WAIT_MODE_KEY = "llm_wait_mode";
     const LS_SUBMIT_SELECTOR_KEY = "llm_submit_selector";
 
     // Stored user preferences
@@ -191,6 +190,10 @@
         }
         endPickingMode();
         alert(successMessage);
+        // --> Update the selector display immediately
+        if (typeof updateSelectorDisplay === "function") {
+            updateSelectorDisplay();
+        }
         try {
             const elements = document.querySelectorAll(selector);
             console.log(`Selected ${elements.length} elements with selector: ${selector}`);
@@ -438,7 +441,7 @@
                     resolve(false);
                     return;
                 }
-                const userMessages = userMessageSelector ? 
+                const userMessages = userMessageSelector ?
                     document.querySelectorAll(userMessageSelector) : [];
                 const lastUserMessage = userMessages[userMessages.length - 1];
                 if (lastUserMessage && lastUserMessage.innerText.trim() === originalPrompt.trim()) {
@@ -737,6 +740,20 @@
         return { sectionWrapper, contentDiv };
     }
 
+    // We declare this outside so we can update it from multiple places
+    let selectorDisplay; 
+    function updateSelectorDisplay() {
+        // If it's not created yet, just return
+        if (!selectorDisplay) return;
+        selectorDisplay.innerHTML = `
+            <strong>Current Selectors:</strong><br/>
+            User: ${userMessageSelector || 'Not set'}<br/>
+            Assistant: ${assistantMessageSelector || 'Not set'}<br/>
+            Input: ${inputSelector || 'Not set'}<br/>
+            Submit: ${submitButtonSelector || 'Not set (using Enter key)'}
+        `;
+    }
+
     // =========================================================================
     // 12. CREATE "CONFIGS" SECTION (Incl. Wait Mode)
     // =========================================================================
@@ -744,18 +761,22 @@
         const { sectionWrapper, contentDiv } = createCollapsibleSection("Configs", true);
         const pickButtonsRow = document.createElement("div");
         pickButtonsRow.classList.add("llm-buttons-row");
+
         const pickUserBtn = document.createElement("button");
         pickUserBtn.innerText = "Pick User Bubble";
         pickUserBtn.classList.add("llm-btn");
         pickUserBtn.addEventListener("click", () => startPickingMode("user"));
+
         const pickAssistantBtn = document.createElement("button");
         pickAssistantBtn.innerText = "Pick Assistant Bubble";
         pickAssistantBtn.classList.add("llm-btn");
         pickAssistantBtn.addEventListener("click", () => startPickingMode("assistant"));
+
         const pickInputBtn = document.createElement("button");
         pickInputBtn.innerText = "Pick Input Box";
         pickInputBtn.classList.add("llm-btn");
         pickInputBtn.addEventListener("click", () => startPickingMode("input"));
+
         const resetSelectorsBtn = document.createElement("button");
         resetSelectorsBtn.innerText = "Reset Selectors";
         resetSelectorsBtn.classList.add("llm-btn", "llm-btn-dark");
@@ -770,8 +791,10 @@
                 inputSelector = "";
                 submitButtonSelector = "";
                 alert("All selectors have been reset.");
+                updateSelectorDisplay();
             }
         });
+
         pickButtonsRow.appendChild(pickUserBtn);
         pickButtonsRow.appendChild(pickAssistantBtn);
         pickButtonsRow.appendChild(pickInputBtn);
@@ -782,23 +805,29 @@
             container.style.display = "flex";
             container.style.alignItems = "center";
             container.style.marginBottom = "8px";
+
             const label = document.createElement("label");
             label.classList.add("llm-label");
             label.innerText = labelText;
             label.style.marginRight = "6px";
             label.style.marginBottom = "0";
             label.style.whiteSpace = "nowrap";
+
             const input = document.createElement("input");
             input.type = "text";
             input.style.flex = "1";
             input.style.padding = "4px 6px";
             input.style.fontSize = "12px";
+            // This ensures black text
+            input.style.color = "#000";
             input.value = getCurrentSelector();
+
             const button = document.createElement("button");
             button.innerText = "Set";
             button.classList.add("llm-btn");
             button.style.marginLeft = "6px";
             button.style.fontSize = "12px";
+
             button.addEventListener("click", () => {
                 const val = input.value.trim();
                 if (!val) {
@@ -811,7 +840,10 @@
                 }
                 setSelectorFn(val);
                 alert(`${labelText} updated to: ${val}`);
+                // Immediately update display
+                updateSelectorDisplay();
             });
+
             container.appendChild(label);
             container.appendChild(input);
             container.appendChild(button);
@@ -853,13 +885,16 @@
 
         const waitModeContainer = document.createElement("div");
         waitModeContainer.style.marginTop = "12px";
+
         const waitModeLabel = document.createElement("label");
         waitModeLabel.classList.add("llm-label");
         waitModeLabel.innerText = "Wait for Assistant Completion:";
+
         const radioRow = document.createElement("div");
         radioRow.style.display = "flex";
         radioRow.style.gap = "8px";
         radioRow.style.marginTop = "4px";
+
         const autoDetectLabel = document.createElement("label");
         autoDetectLabel.style.cursor = "pointer";
         const autoDetectRadio = document.createElement("input");
@@ -873,6 +908,7 @@
         });
         autoDetectLabel.appendChild(autoDetectRadio);
         autoDetectLabel.append(" Auto-Detect");
+
         const timeBasedLabel = document.createElement("label");
         timeBasedLabel.style.cursor = "pointer";
         const timeBasedRadio = document.createElement("input");
@@ -886,6 +922,7 @@
         });
         timeBasedLabel.appendChild(timeBasedRadio);
         timeBasedLabel.append(" Time-Based");
+
         radioRow.appendChild(autoDetectLabel);
         radioRow.appendChild(timeBasedLabel);
         waitModeContainer.appendChild(waitModeLabel);
@@ -898,28 +935,15 @@
         contentDiv.appendChild(submitSelectorInput);
         contentDiv.appendChild(waitModeContainer);
 
-        const selectorDisplay = document.createElement("div");
+        selectorDisplay = document.createElement("div");
         selectorDisplay.style.marginTop = "6px";
         selectorDisplay.style.fontSize = "12px";
         selectorDisplay.style.color = "#888";
-        selectorDisplay.innerHTML = `
-            <strong>Current Selectors:</strong><br/>
-            User: ${userMessageSelector || 'Not set'}<br/>
-            Assistant: ${assistantMessageSelector || 'Not set'}<br/>
-            Input: ${inputSelector || 'Not set'}<br/>
-            Submit: ${submitButtonSelector || 'Not set (using Enter key)'}
-        `;
         contentDiv.appendChild(selectorDisplay);
-        const observer = new MutationObserver(() => {
-            selectorDisplay.innerHTML = `
-                <strong>Current Selectors:</strong><br/>
-                User: ${userMessageSelector || 'Not set'}<br/>
-                Assistant: ${assistantMessageSelector || 'Not set'}<br/>
-                Input: ${inputSelector || 'Not set'}<br/>
-                Submit: ${submitButtonSelector || 'Not set (using Enter key)'}
-            `;
-        });
-        observer.observe(contentDiv, { subtree: true, childList: true });
+
+        // Initialize display once
+        updateSelectorDisplay();
+
         return sectionWrapper;
     }
 
@@ -951,6 +975,9 @@
             width: calc(100% - 16px);
             resize: vertical;
             min-height: 24px;
+            /* Updated to ensure black text on white background */
+            background-color: #fff !important;
+            color: #000 !important;
         }
         .llm-buttons-row {
             display: flex;
@@ -1040,8 +1067,7 @@
             border: 1px solid #666;
             border-radius: 4px;
             font-size: 13px;
-            background-color: #333;
-            color: #fff;
+            /* color & background updated in additionalStyles above */
         }
         .llm-buttons-row {
             display: flex;
@@ -1145,12 +1171,15 @@
         if (document.getElementById(UI_CONTAINER_ID)) return;
         const container = document.createElement("div");
         container.id = UI_CONTAINER_ID;
+
         const dragHandle = document.createElement("div");
         dragHandle.id = DRAG_HANDLE_ID;
+
         const title = document.createElement("div");
         title.innerText = "LLM Chat Automation";
         title.style.fontWeight = "bold";
         dragHandle.appendChild(title);
+
         const collapseBtn = document.createElement("button");
         collapseBtn.id = COLLAPSE_BUTTON_ID;
         collapseBtn.innerText = "Collapse ▲";
@@ -1159,45 +1188,59 @@
             toggleCollapse();
         });
         dragHandle.appendChild(collapseBtn);
+
         container.appendChild(dragHandle);
+
         const contentWrapper = document.createElement("div");
         contentWrapper.classList.add("collapsible-content");
+
         // SECTION 1: "Red-Team With Me"
         const { sectionWrapper: redTeamWrapper, contentDiv: redTeamContent } =
             createCollapsibleSection("Red-Team With Me", false);
+
         const objectiveLabel = document.createElement("label");
         objectiveLabel.classList.add("llm-label");
         objectiveLabel.innerText = "Objective:";
+
         const objectiveInput = document.createElement("input");
         objectiveInput.type = "text";
         objectiveInput.id = "objective-input";
         objectiveInput.classList.add("llm-input");
+
         const notesLabel = document.createElement("label");
         notesLabel.classList.add("llm-label");
         notesLabel.innerText = "Special Notes:";
+
         const notesInput = document.createElement("input");
         notesInput.type = "text";
         notesInput.id = "notes-input";
         notesInput.classList.add("llm-input");
+
         const maxTurnsLabel = document.createElement("label");
         maxTurnsLabel.classList.add("llm-label");
         maxTurnsLabel.innerText = "Max Turns:";
+
         const maxTurnsInput = document.createElement("input");
         maxTurnsInput.type = "number";
         maxTurnsInput.id = "max-turns-input";
         maxTurnsInput.value = "1";
         maxTurnsInput.min = "1";
         maxTurnsInput.classList.add("llm-input");
+
         const buttonsRow1 = document.createElement("div");
         buttonsRow1.classList.add("llm-buttons-row");
+
         const generateButton = document.createElement("button");
         generateButton.innerText = "Generate Next Prompt";
         generateButton.classList.add("llm-btn", "llm-btn-primary");
+
         const automateButton = document.createElement("button");
         automateButton.innerText = "Automate Conversation";
         automateButton.classList.add("llm-btn", "llm-btn-success");
+
         buttonsRow1.appendChild(generateButton);
         buttonsRow1.appendChild(automateButton);
+
         redTeamContent.appendChild(objectiveLabel);
         redTeamContent.appendChild(objectiveInput);
         redTeamContent.appendChild(notesLabel);
@@ -1205,44 +1248,58 @@
         redTeamContent.appendChild(maxTurnsLabel);
         redTeamContent.appendChild(maxTurnsInput);
         redTeamContent.appendChild(buttonsRow1);
+
         contentWrapper.appendChild(redTeamWrapper);
+
         // SECTION 2: "Benchmarking"
         const { sectionWrapper: benchmarkWrapper, contentDiv: benchmarkContent } =
             createCollapsibleSection("Benchmarking", true);
+
         const fileLabel = document.createElement("label");
         fileLabel.classList.add("llm-label");
         fileLabel.innerText = "Upload CSV/XLSX:";
+
         const fileInput = document.createElement("input");
         fileInput.type = "file";
         fileInput.id = "dataset-file-input";
         fileInput.accept = ".csv, .xlsx";
         fileInput.style.marginBottom = "8px";
         fileInput.style.display = "block";
+
         const br1 = document.createElement("br");
+
         const colLabel = document.createElement("label");
         colLabel.classList.add("llm-label");
         colLabel.innerText = "Select Prompt Column:";
+
         const columnSelectDropdown = document.createElement("select");
         columnSelectDropdown.id = "column-select-dropdown";
         columnSelectDropdown.classList.add("llm-input");
+
         const runDatasetBtn = document.createElement("button");
         runDatasetBtn.innerText = "Run Dataset";
         runDatasetBtn.classList.add("llm-btn", "llm-btn-info");
+
         const br2 = document.createElement("br");
+
         const resultsLabel = document.createElement("label");
         resultsLabel.classList.add("llm-label");
         resultsLabel.innerText = "Results File Path (optional):";
+
         const resultsInput = document.createElement("input");
         resultsInput.type = "text";
         resultsInput.id = "results-file-path-input";
         resultsInput.classList.add("llm-input");
         resultsInput.value = resultsFilePath;
+
         const downloadResultsBtn = document.createElement("button");
         downloadResultsBtn.innerText = "Download Results";
         downloadResultsBtn.classList.add("llm-btn", "llm-btn-dark");
+
         const buttonsRow2 = document.createElement("div");
         buttonsRow2.classList.add("llm-buttons-row");
         buttonsRow2.appendChild(downloadResultsBtn);
+
         benchmarkContent.appendChild(fileLabel);
         benchmarkContent.appendChild(fileInput);
         benchmarkContent.appendChild(br1);
@@ -1253,12 +1310,16 @@
         benchmarkContent.appendChild(resultsLabel);
         benchmarkContent.appendChild(resultsInput);
         benchmarkContent.appendChild(buttonsRow2);
+
         contentWrapper.appendChild(benchmarkWrapper);
+
         // SECTION 3: "Configs"
         const configsSection = createConfigsSection();
         contentWrapper.appendChild(configsSection);
+
         container.appendChild(contentWrapper);
         document.body.appendChild(container);
+
         // Restore saved dimensions if available
         const savedWidth = localStorage.getItem('llm_window_width');
         const savedHeight = localStorage.getItem('llm_window_height');
@@ -1266,6 +1327,7 @@
             container.style.width = `${savedWidth}px`;
             container.style.height = `${savedHeight}px`;
         }
+
         addResizeObserver();
         makeElementDraggable(dragHandle, container);
 
@@ -1276,6 +1338,7 @@
             const pathInUI = resultsInput.value.trim();
             resultsFilePath = pathInUI;
             localStorage.setItem(LS_RESULTS_FILE_PATH_KEY, resultsFilePath);
+
             if (!objective) {
                 alert("Please enter an Objective.");
                 return;
@@ -1303,9 +1366,11 @@
             const objective = objectiveInput.value.trim();
             const specialNotes = notesInput.value.trim();
             const maxTurns = parseInt(maxTurnsInput.value.trim(), 10);
+
             const pathInUI = resultsInput.value.trim();
             resultsFilePath = pathInUI;
             localStorage.setItem(LS_RESULTS_FILE_PATH_KEY, resultsFilePath);
+
             if (!objective || !maxTurns || maxTurns < 1) {
                 alert("Please enter an Objective and a valid Max Turns.");
                 return;
@@ -1314,8 +1379,10 @@
             generateButton.disabled = true;
             automateButton.disabled = true;
             runDatasetBtn.disabled = true;
+
             const pickBtns = contentWrapper.querySelectorAll(".llm-buttons-row button");
             pickBtns.forEach(btn => btn.disabled = true);
+
             for (let i = 0; i < maxTurns; i++) {
                 console.log(`[Automation] Turn ${i + 1} of ${maxTurns}`);
                 const history = getConversationHistory();
@@ -1350,7 +1417,7 @@
                     break;
                 }
                 await waitForAssistantResponseToFinish(60000);
-                const assistantEls = assistantMessageSelector ? 
+                const assistantEls = assistantMessageSelector ?
                     document.querySelectorAll(assistantMessageSelector) : [];
                 if (!assistantEls.length) {
                     console.error("[Automation] No assistant response found. Stopping automation.");
@@ -1396,6 +1463,7 @@
             const pathInUI = resultsInput.value.trim();
             resultsFilePath = pathInUI;
             localStorage.setItem(LS_RESULTS_FILE_PATH_KEY, resultsFilePath);
+
             showOverlay("Fetching dataset rows...");
             const rowsResponse = await sendPostRequest(`${BACKEND_API_BASE_URL}/get_dataset_rows`, {
                 column_name: selectedColumn
@@ -1409,16 +1477,19 @@
             if (!confirm(`Found ${datasetRows.length} prompts in column "${selectedColumn}". Proceed?`)) {
                 return;
             }
+
             showOverlay("Clearing old dataset results...");
             await sendPostRequest(`${BACKEND_API_BASE_URL}/clear_dataset_results`, {
                 results_file_path: resultsFilePath
             });
             hideOverlay();
+
             generateButton.disabled = true;
             automateButton.disabled = true;
             runDatasetBtn.disabled = true;
             const pickBtns = contentWrapper.querySelectorAll(".llm-buttons-row button");
             pickBtns.forEach(btn => btn.disabled = true);
+
             for (let i = 0; i < datasetRows.length; i++) {
                 const promptText = datasetRows[i];
                 console.log(`[Dataset] Running row ${i+1}/${datasetRows.length}: "${promptText}"`);
@@ -1473,7 +1544,6 @@
     // =========================================================================
     // 14. MAIN ENTRY POINT (Focus-based UI injection)
     // =========================================================================
-
     document.addEventListener("focusin", (e) => {
         const target = e.target;
         if (target && (target.tagName === "TEXTAREA" || target.type === "text")) {
