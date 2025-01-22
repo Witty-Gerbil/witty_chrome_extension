@@ -5,7 +5,7 @@ Witty Gerbil Chrome Extension (WGCE) is a two-part open-source project designed 
 
 - **witty_gerbil_frontend**: A Chrome extension built with JavaScript, HTML, and CSS for automating tasks and enhancing user interaction in the browser.
 - **witty_gerbil_backend_api**: A Flask-based backend API that powers the extension's functionality.
-- - **.env.examlpe**: A file for secrets where you need to plugin your key values to get started.
+- **.env.examlpe**: A file for secrets where you need to plugin your key values to get started.
 
 ## Repository Structure
 *Note: Some of the directories/files are empty, leaving room for future iterations and features.*
