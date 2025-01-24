@@ -67,16 +67,7 @@ witty_chrome_extension/
 If you benefit from this code or research, please cite our papers:
 
 ```
-@misc{cameron2025wittygerbil,
-  title        = {Witty Gerbil Chrome Extension: A Browser-Based Framework for Comprehensive AI System Evaluation},
-  author       = {Cameron, Samuel},
-  year         = {2025},
-  eprint       = {submit/6144732},
-  archivePrefix= {arXiv},
-  primaryClass = {cs.AI},
-  note         = {Submission in progress},
-  url          = {http://creativecommons.org/licenses/by/4.0/}
-}
+citing information will be made available following publicaiton. 
 
 ```
 
@@ -184,6 +175,11 @@ const BACKEND_API_BASE_URL = "http://your-backend-url-here";
 - Manual selector configuration needed for complex webpages
 - Requires OpenAI API key (support for local models planned)
 - Current UI toggle behavior may need refinement
+
+## Future Work
+- Integrate with models other than OpenAI
+- Integrate with established attack frameworks and software (PyRIT, Garak, Artkit, etc.)
+- Improve auto-detection of webpage elements
 
 ## Contributing
 
