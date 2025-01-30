@@ -67,8 +67,14 @@ witty_chrome_extension/
 If you benefit from this code or research, please cite our papers:
 
 ```
-citing information will be made available following publicaiton. 
-
+@inproceedings{
+cameron2025witty,
+title={Witty Gerbil Chrome Extension: A Browser-Based Framework for Comprehensive {AI} System Evaluation},
+author={Samuel Ross Cameron},
+booktitle={The First International Workshop on Transformative Insights in Multifaceted Evaluation at The Web Conference 2025},
+year={2025},
+url={https://openreview.net/forum?id=b79lyevBsp}
+}
 ```
 
 ## Video Demo Coming Soon
