@@ -1,7 +1,7 @@
 # Witty Gerbil Chrome Extension
 
 <p align="center">
-  <img src="assets/witty_gerbil_logo.png" alt="Witty Gerbil Logo" width="300">
+  <img src="assets/wg.png" alt="Witty Gerbil Logo" width="300">
 </p>
 
 ## Overview
