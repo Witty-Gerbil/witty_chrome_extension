@@ -1,5 +1,9 @@
 # Witty Gerbil Chrome Extension
 
+<p align="center">
+  <img src="assets/witty_gerbil_logo.png" alt="Witty Gerbil Logo" width="300">
+</p>
+
 ## Overview
 Witty Gerbil Chrome Extension (WGCE) is a two-part open-source project designed to enhance AI Red Teaming efforts with a Chrome extension frontend and a Python backend run locally. This repository consists of:
 
