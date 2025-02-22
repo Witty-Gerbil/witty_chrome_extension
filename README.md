@@ -71,13 +71,11 @@ witty_chrome_extension/
 If you benefit from this code or research, please cite our papers:
 
 ```
-@inproceedings{
-cameron2025witty,
-title={Witty Gerbil Chrome Extension: A Browser-Based Framework for Comprehensive {AI} System Evaluation},
-author={Samuel Ross Cameron},
-booktitle={The First International Workshop on Transformative Insights in Multifaceted Evaluation at The Web Conference 2025},
-year={2025},
-url={https://openreview.net/forum?id=b79lyevBsp}
+@inproceedings{time2025,
+  title={TIME 2025: 1st International Workshop on Transformative Insights in Multi-faceted Evaluation},
+  author={Lei Wang and Md Zakir Hossain and Syed Islam and Tom Gedeon and Sharifa Alghowinem and Isabella Yu and Serena Bono and Xuanying Zhu and Gennie Nguyen and Nur Haldar and Seyed Jalali and Abdur Razzaque and Imran Razzak and Rafiqul Islam and Shahadat Uddin and Naeem Janjua and Aneesh Krishna and Manzur Ashraf},
+  booktitle={ACM Web Conference Workshop},
+  year={2025}
 }
 ```
 
